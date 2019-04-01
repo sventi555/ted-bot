@@ -1,15 +1,15 @@
 from src.scrape import Scraper
 from src.message import message
-from random import randint
+from random import sample
 
 scraper = Scraper()
 links = scraper.scrapeUrls(['Technology', 'Design', 'Business'])
-link = links[randint(0, len(links) - 1)]
+link = sample(links, 1)[0]
 
 with open('history') as f:
 	past_links = f.readlines()
-	while link in past_links:
-		link = links[randin(0, len(links) - 1)]
+	while link in list(map(lambda x: x.strip(), past_links)):
+		link = sample(links, 1)[0]
 
 description = scraper.scrapeDescription(link)
 
