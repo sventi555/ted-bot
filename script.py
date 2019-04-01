@@ -12,10 +12,11 @@ with open('history') as f:
 	while link in past_links:
 		link = links[randin(0, len(links) - 1)]
 
-with open('history', 'a', ) as f:
-	f.write(link + '\n')
-
 description = scraper.scrapeDescription(link)
+
 scraper.close()
 
 message(link, description)
+
+with open('history', 'a', ) as f:
+	f.write(link + '\n')

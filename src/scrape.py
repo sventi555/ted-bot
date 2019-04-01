@@ -1,16 +1,17 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
+from selenium.webdriver.chrome.options import Options
+import json
+
+config = None
+with open('config.json') as f:
+	config = json.load(f)
 
 class Scraper:
 
 	def __init__(self):
 		chrome_options = Options()
-		# chrome_options.add_argument("--headless")	
-		self.driver = webdriver.Chrome(chrome_options=chrome_options)
+		chrome_options.add_argument("--headless")	
+		self.driver = webdriver.Chrome(executable_path=config.get('CHROME_LOCATION'), chrome_options=chrome_options)
 
 	def scrapeUrls(self, topics):
 		video_links = []
@@ -26,10 +27,8 @@ class Scraper:
 
 	def scrapeDescription(self, url):
 		self.driver.get(url)
-		description = self.driver.find_element_by_xpath("//p[contains(@class, 'l-h') and contains(@class, 'm-b')]")
-		return description.text
+		description = self.driver.find_element_by_xpath("//meta[@itemprop='description']")
+		return description.get_attribute('content')
 
 	def close(self):
 		self.driver.close()
-
-	
