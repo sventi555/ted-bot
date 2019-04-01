@@ -6,7 +6,6 @@ scraper = Scraper()
 links = scraper.scrapeUrls(['Technology', 'Design', 'Business'])
 link = links[randint(0, len(links) - 1)]
 
-history = None
 with open('history') as f:
 	past_links = f.readlines()
 	while link in past_links:
