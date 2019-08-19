@@ -1,21 +1,39 @@
-from src.scrape import Scraper
-from src.message import message
+from os import getenv, path
 from random import sample
 
-scraper = Scraper()
+from dotenv import load_dotenv
+load_dotenv()
+
+from src.scrape import Scraper
+from src.message import message
+
+# set up scraper and grab links, then pick a random one
+scraper = Scraper(getenv('CHROME_LOCATION'))
 links = scraper.scrapeUrls(['Technology', 'Design', 'Business'])
 link = sample(links, 1)[0]
 
-with open('history') as f:
+base_dir = path.dirname(path.abspath(__file__))
+history_path = path.join(base_dir, 'artifacts/history')
+
+# if history artifact does not exist, create one
+if not path.exists(history_path):
+    open(history_path, 'a').close()
+
+# check history to see if link was posted before, and cycle for a new one
+with open(history_path) as f:
 	past_links = f.readlines()
 	while link in list(map(lambda x: x.strip(), past_links)):
 		link = sample(links, 1)[0]
+	past_links.append(link)
 
+# get the description for the chosen link
 description = scraper.scrapeDescription(link)
 
 scraper.close()
 
-message(link, description)
+# send a formatted message to slack workspace determined by HOOK_URL
+message(getenv('HOOK_URL'), link, description)
 
-with open('history', 'a', ) as f:
-	f.write(link + '\n')
+with open(history_path, 'w') as f:
+	# save at most 50 most recent links
+	f.writelines(past_links[-50:])
