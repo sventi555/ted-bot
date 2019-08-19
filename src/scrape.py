@@ -75,4 +75,4 @@ class Scraper:
 		"""
 		Closes `self.driver`.
 		"""
-		self.driver.close()
+		self.driver.quit()
