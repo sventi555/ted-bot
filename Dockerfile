@@ -8,16 +8,16 @@ RUN apt-get update && apt-get install -y \
 RUN pip install pipenv
 
 # chromedriver
-RUN wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-RUN unzip chromedriver_linux64.zip
-RUN mv chromedriver /usr/bin/chromedriver
+RUN wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/bin/chromedriver
 ENV CHROME_LOCATION /usr/bin/chromedriver
 
 # install google chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-RUN apt-get -y update
-RUN apt-get install -y google-chrome-stable
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get -y update && \
+    apt-get install -y google-chrome-stable
 
 RUN mkdir /app
 WORKDIR /app
@@ -29,8 +29,4 @@ RUN pipenv install --deploy
 
 COPY . .
 
-CMD ["pipenv", "run", "python", "script.py"]
-
-
-
-
+CMD ["pipenv", "run", "python", "src/script.py"]
